@@ -46,11 +46,27 @@ name_parts = myth_hash.hash_name("The moon whispered secrets, but only the cats 
 print(name_parts)  # Output: ('exotic', 'thoughtful', 'Griffin')
 
 # Access individual parts of the name
-physical_attr, personality_attr, mystical_creature = name_parts
+physical_attr, personality_attr, mystical_character = name_parts
 print(f"Physical Attribute: {physical_attr}")
 print(f"Personality Trait: {personality_attr}")
-print(f"Mystical Creature: {mystical_creature}")
+print(f"Mystical Character: {mystical_character}")
 ```
+## Performance and Collisions of the Algorithm in Version 0.1.0
+
+In a test with 1,000,000 generated names, the hash_name algorithm produced the following results:
+  - Total generated names: 1,000,000 
+  - Actual duplicates: 119,949 
+  - Uniqueness rate: 88.01%
+
+### What Do These Results Mean?
+
+ - Collisions: The actual number of duplicates (119,949) resulting in a uniqueness rate of 88.01%. This means roughly 12% of the generated names were duplicates.
+ - Implications: While the algorithm is robust, users should be aware that with large datasets, the likelihood of name collisions increases. 
+
+## Future Improvements
+
+ - **Improved Uniqueness:** Add more attributes and characters to reduce the likelihood of name collisions.
+ - **Additional Languages:** Add support for more languages with help from the community.
 
 ## Contributing
 

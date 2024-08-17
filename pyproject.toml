@@ -1,0 +1,75 @@
+[tool.poetry]
+name = "myth-hash"
+version = "0.1.0"
+description = "A tool for generating human-readable, multilingual fantasy character names based on input string hashes."
+authors = ["Claas Flint <claas.flint@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/cl445/myth-hash"
+repository = "https://github.com/cl445/myth-hash"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+include = ["data/*.json"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.scripts]
+myth-hash = "myth_hash.cli:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dev-dependencies]
+bandit = "^1.7.9"
+black = "^24.4.2"
+isort = "^5.12.0"
+mypy = "^1.5.0"
+pylint = "^3.2.6"
+pytest = "^7.5.2"
+pyupgrade = "^3.11.0"
+
+[tool.bandit]
+exclude = ["tests/*.py", "venv/*.py"]
+
+[tool.mypy]
+python_version = "3.11"
+disable_error_code = ["attr-defined"]
+ignore_missing_imports = true
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_return_any = true
+warn_redundant_casts = true
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = [
+    "broad-exception-caught",
+    "chained-comparison",
+    "fixme",
+    "format",
+    "invalid-name",
+    "missing-docstring",
+    "pointless-string-statement",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-branches",
+    "too-many-locals",
+    "too-many-nested-blocks",
+    "too-many-return-statements",
+    "too-many-statements",
+    "too-many-instance-attributes",
+    "R0801",
+    "W1203",
+    "no-else-raise",
+    "no-else-return"
+]
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
