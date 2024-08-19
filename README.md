@@ -1,6 +1,6 @@
 # Myth Hash
 
-`Myth Hash` is aPython package designed to create human-readable hashes that are not only functional but also cognitively engaging. A key feature of this tool is its multilingual support, enabling the generation of hashes in multiple languages. The concept behind these human-readable hashes is to enhance communication and recognition by creating hashes that form vivid, memorable mental images. The goal is to make the hash as human-compatible as possible, ensuring it effectively serves its purpose in an intuitive and user-friendly manner.
+`Myth Hash` is a Python package designed to create human-readable hashes that are not only functional but also cognitively engaging. A key feature of this tool is its multilingual support, enabling the generation of hashes in multiple languages. The concept behind these human-readable hashes is to enhance communication and recognition by creating hashes that form vivid, memorable mental images. The goal is to make the hash as human-compatible as possible, ensuring it effectively serves its purpose in an intuitive and user-friendly manner.
 ## Features
 
 - **Character Name Generation:** Generates a unique fantasy name based on an input string.
