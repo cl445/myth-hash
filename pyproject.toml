@@ -26,13 +26,14 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dev-dependencies]
-bandit = "^1.7.9"
-black = "^24.4.2"
-isort = "^5.12.0"
-mypy = "^1.5.0"
-pylint = "^3.2.6"
-pytest = "^7.5.2"
-pyupgrade = "^3.11.0"
+bandit = "*"
+black = "*"
+isort = "*"
+mypy = "*"
+pylint = "*"
+pytest = "*"
+pyupgrade = "*"
+nox = "*"
 
 [tool.bandit]
 exclude = ["tests/*.py", "venv/*.py"]
@@ -73,3 +74,15 @@ disable = [
 [tool.pytest.ini_options]
 log_cli = true
 log_cli_level = "INFO"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true

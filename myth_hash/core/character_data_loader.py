@@ -66,5 +66,6 @@ class CharacterDataLoader:
     def character_data(self) -> CharacterData:
         if self._character_data is None:
             self._load_data()
-        assert self._character_data is not None
+        if self._character_data is None:
+            raise RuntimeError("Character data not loaded")
         return self._character_data
