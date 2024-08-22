@@ -30,6 +30,7 @@ def install_dev_deps(session):
 
 @nox.session(python="python3.11")
 def check_format(session):
+    session.run("poetry", "install")
     session.log("Checking code formatting with black and isort")
     session.run("poetry", "run", "black", "--check", str(PYTHON_SOURCE), external=True)
     session.run("poetry", "run", "isort", "--check-only", *PYTHON_FILES, external=True)
