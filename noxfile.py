@@ -65,12 +65,16 @@ def bandit(session):
 
 @nox.session(python="python3.11")
 def mypy(session):
+    session.install("poetry")
+    session.run("poetry", "install")
     session.log("Running type checks with mypy")
     session.run("poetry", "run", "mypy", *PYTHON_FILES, external=True)
 
 
 @nox.session(python="python3.11")
 def pylint(session):
+    session.install("poetry")
+    session.run("poetry", "install")
     session.log("Running linting with pylint")
     session.run("poetry", "run", "pylint", *PYTHON_FILES, external=True)
 
