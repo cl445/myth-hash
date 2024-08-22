@@ -49,6 +49,8 @@ def format_files(session):
 
 @nox.session(python="python3.11")
 def bandit(session):
+    session.install("poetry")
+    session.run("poetry", "install")
     session.log("Running security checks with bandit")
     tests_dir = PYTHON_SOURCE / "tests"
     session.run(
