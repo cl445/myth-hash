@@ -31,4 +31,5 @@ jobs:
         pip install nox
 
     - name: Run Nox
-      run: nox
+      run: |
+        nox -s "session_name"

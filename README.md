@@ -1,7 +1,15 @@
 # Myth Hash
-![Nox Pipeline](https://github.com/cl445/myth-hash/actions/workflows/nox.yml/badge.svg)
+
+![Nox Tests on Multiple Python Versions](https://github.com/cl445/myth-hash/actions/workflows/nox.yml/badge.svg)
+![Coverage](https://codecov.io/gh/cl445/myth-hash/branch/main/graph/badge.svg)
+![Python Versions](https://img.shields.io/pypi/pyversions/myth-hash.svg)
+![License](https://img.shields.io/github/license/cl445/myth-hash.svg)
+![Last Commit](https://img.shields.io/github/last-commit/cl445/myth-hash.svg)
+![Contributors](https://img.shields.io/github/contributors/cl445/myth-hash.svg)
+![Issues](https://img.shields.io/github/issues/cl445/myth-hash.svg)
 
 `Myth Hash` is a Python package designed to create human-readable hashes that are not only functional but also cognitively engaging. A key feature of this tool is its multilingual support, enabling the generation of hashes in multiple languages. The concept behind these human-readable hashes is to enhance communication and recognition by creating hashes that form vivid, memorable mental images. The goal is to make the hash as human-compatible as possible, ensuring it effectively serves its purpose in an intuitive and user-friendly manner.
+
 ## Features
 
 - **Character Name Generation:** Generates a unique fantasy name based on an input string.
@@ -9,6 +17,7 @@
 - **CLI Support:** Easily generate names via the command line.
 - **Library Usage:** Integrate `Myth Hash` into your Python projects.
 - **Customizable Data:** Modify the included JSON files to customize the generated names.
+
 
 ## Installation
 

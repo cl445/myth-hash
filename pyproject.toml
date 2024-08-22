@@ -16,7 +16,7 @@ classifiers = [
 include = ["data/*.json"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<4.0"
 
 [tool.poetry.scripts]
 myth-hash = "myth_hash.cli:main"
