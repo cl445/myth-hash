@@ -81,7 +81,7 @@ def upgrade_syntax(session):
     )
 
 
-@nox.session(python=["3.11", "3.12", "3.13"])
+@nox.session(python=["3.11", "3.12"])
 def test(session):
     session.log("Running tests with pytest")
     session.install("poetry")
