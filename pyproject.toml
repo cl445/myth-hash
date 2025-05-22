@@ -9,14 +9,14 @@ homepage = "https://github.com/cl445/myth-hash"
 repository = "https://github.com/cl445/myth-hash"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"
 ]
 include = ["data/*.json"]
 
 [tool.poetry.dependencies]
-python = ">=3.11,<4.0"
+python = "^3.12"
 
 [tool.poetry.scripts]
 myth-hash = "myth_hash.cli:main"
@@ -25,7 +25,7 @@ myth-hash = "myth_hash.cli:main"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 bandit = "*"
 black = "*"
 isort = "*"
@@ -39,7 +39,7 @@ nox = "*"
 exclude = ["tests/*.py", "venv/*.py"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 disable_error_code = ["attr-defined"]
 ignore_missing_imports = true
 warn_unused_configs = true
@@ -77,7 +77,7 @@ log_cli_level = "INFO"
 
 [tool.black]
 line-length = 88
-target-version = ['py311']
+target-version = ['py312']
 
 [tool.isort]
 profile = "black"
