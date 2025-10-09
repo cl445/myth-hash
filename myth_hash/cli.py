@@ -1,3 +1,5 @@
+"""Command-line interface for Myth Hash."""
+
 import argparse
 import json
 import logging
@@ -7,18 +9,20 @@ from myth_hash import hash_name
 
 
 def setup_logging(log_level: str) -> None:
+    """Configure logging with the specified log level."""
     numeric_level = getattr(logging, log_level.upper(), None)
     if not isinstance(numeric_level, int):
-        logging.error(f"Invalid log level: {log_level}")
+        logging.error("Invalid log level: %s", log_level)
         sys.exit(1)
     logging.basicConfig(level=numeric_level)
 
 
 def hash_name_cli(input_string: str, language: str, output_format: str) -> None:
+    """Generate and output a fantasy name in the specified format."""
     try:
         physical_attr, personality_attr, character = hash_name(input_string, language)
     except Exception as e:
-        logging.error(f"Failed to generate fantasy name: {e}")
+        logging.error("Failed to generate fantasy name: %s", e)
         raise
 
     if output_format == "text":
@@ -33,6 +37,7 @@ def hash_name_cli(input_string: str, language: str, output_format: str) -> None:
 
 
 def parse_arguments() -> argparse.Namespace:
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Generates a fantasy name consisting of two character attributes and a mythical creature from a hash value of an input string.",
     )
@@ -69,11 +74,13 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def validate_input_string(input_string: str) -> None:
+    """Validate that the input string is not empty."""
     if not input_string.strip():
         raise ValueError("Input string cannot be empty.")
 
 
-def main():
+def main() -> None:
+    """Main entry point for the CLI."""
     args = parse_arguments()
 
     setup_logging(args.log_level)
@@ -82,10 +89,10 @@ def main():
         validate_input_string(args.input_string)
         hash_name_cli(args.input_string, args.language, args.format)
     except ValueError as ve:
-        logging.error(f"Input validation error: {ve}")
+        logging.error("Input validation error: %s", ve)
         sys.exit(1)
-    except Exception as e:
-        logging.error(f"An unexpected error occurred: {e}")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logging.error("An unexpected error occurred: %s", e)
         sys.exit(1)
 
 

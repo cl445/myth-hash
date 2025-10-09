@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "myth-hash"
-version = "0.1.0"
+version = "0.2.0"
 description = "A tool for generating human-readable, multilingual fantasy character names based on input string hashes."
 authors = ["Claas Flint <claas.flint@gmail.com>"]
 license = "MIT"
@@ -10,10 +10,15 @@ repository = "https://github.com/cl445/myth-hash"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent"
+    "Operating System :: OS Independent",
+    "Typing :: Typed"
 ]
-include = ["data/*.json"]
+include = ["data/*.json", "py.typed"]
+packages = [{include = "myth_hash"}]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
@@ -25,13 +30,14 @@ myth-hash = "myth_hash.cli:main"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 bandit = "*"
 black = "*"
 isort = "*"
 mypy = "*"
 pylint = "*"
 pytest = "*"
+pytest-cov = "*"
 pyupgrade = "*"
 nox = "*"
 
@@ -39,45 +45,32 @@ nox = "*"
 exclude = ["tests/*.py", "venv/*.py"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.14"
 disable_error_code = ["attr-defined"]
+strict = true
 ignore_missing_imports = true
 warn_unused_configs = true
 warn_unused_ignores = true
 warn_no_return = true
 warn_return_any = true
 warn_redundant_casts = true
+exclude = ["tests/", "noxfile.py"]
 
 [tool.pylint.'MESSAGES CONTROL']
 disable = [
-    "broad-exception-caught",
-    "chained-comparison",
-    "fixme",
-    "format",
-    "invalid-name",
-    "missing-docstring",
-    "pointless-string-statement",
-    "too-few-public-methods",
-    "too-many-arguments",
-    "too-many-branches",
-    "too-many-locals",
-    "too-many-nested-blocks",
-    "too-many-return-statements",
-    "too-many-statements",
-    "too-many-instance-attributes",
-    "R0801",
-    "W1203",
-    "no-else-raise",
-    "no-else-return"
+    "line-too-long"
 ]
 
 [tool.pytest.ini_options]
 log_cli = true
 log_cli_level = "INFO"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
 
 [tool.black]
 line-length = 88
-target-version = ['py311']
+target-version = ['py311', 'py312', 'py313', 'py314']
 
 [tool.isort]
 profile = "black"

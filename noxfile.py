@@ -6,6 +6,9 @@ import nox
 nox.options.sessions = ["check", "test"]
 nox.options.reuse_existing_virtualenvs = True
 nox.options.stop_on_first_error = True
+nox.options.default_venv_backend = "venv"
+# Allow nox to find Python versions via pyenv
+nox.options.error_on_missing_interpreters = False
 
 PYTHON_SOURCE = Path(__file__).parent
 EXCLUDE_DIRS = {"build", "dist", ".git", ".venv", ".nox", "__pycache__"}
@@ -14,93 +17,111 @@ PYTHON_FILES = [
     for file in PYTHON_SOURCE.rglob("*.py")
     if not any(exclude in file.parts for exclude in EXCLUDE_DIRS)
 ]
+MYPY_FILES = [
+    str(file)
+    for file in (PYTHON_SOURCE / "myth_hash").rglob("*.py")
+    if not any(exclude in file.parts for exclude in EXCLUDE_DIRS)
+]
 
 
-@nox.session(python="python3.11")
-def install_deps(session):
-    session.log("Installing project dependencies")
-    session.run("poetry", "install", "--no-root", external=True)
+def install_with_poetry(session):
+    """Helper function to install dependencies with Poetry."""
+    # Install poetry into the nox virtualenv
+    session.run("python", "-m", "pip", "install", "poetry", external=True)
+    session.run("poetry", "install", external=True)
 
 
-@nox.session(python="python3.11")
-def install_dev_deps(session):
-    session.log("Installing development dependencies")
-    session.run("poetry", "install", "--with", "dev", external=True)
+@nox.session(python=["3.11", "3.12", "3.13", "3.14", "3.14t"])
+def test(session):
+    """Run the test suite (excluding slow tests)."""
+    install_with_poetry(session)
 
-
-@nox.session(python="python3.11")
-def check_format(session):
-    session.install("poetry")
-    session.run("poetry", "install")
-    session.log("Checking code formatting with black and isort")
-    session.run("poetry", "run", "black", "--check", str(PYTHON_SOURCE), external=True)
-    session.run("poetry", "run", "isort", "--check-only", *PYTHON_FILES, external=True)
-
-
-@nox.session(python="python3.11")
-def format_files(session):
-    session.log("Formatting code with black and isort")
-    session.run(
-        "poetry", "run", "pyupgrade", "--py311-plus", *PYTHON_FILES, external=True
-    )
-    session.run("poetry", "run", "black", str(PYTHON_SOURCE), external=True)
-    session.run("poetry", "run", "isort", *PYTHON_FILES, external=True)
-
-
-@nox.session(python="python3.11")
-def bandit(session):
-    session.install("poetry")
-    session.run("poetry", "install")
-    session.log("Running security checks with bandit")
-    tests_dir = PYTHON_SOURCE / "tests"
+    session.log("Running tests with pytest (excluding slow tests)")
     session.run(
         "poetry",
         "run",
-        "bandit",
-        "-r",
-        *PYTHON_FILES,
-        "--exclude",
-        str(tests_dir),
+        "pytest",
+        "-m",
+        "not slow",
+        "--cov=myth_hash",
+        "--cov-report=term-missing",
+        "--cov-report=xml",
+        "tests/",
+        *session.posargs,
         external=True,
     )
 
 
-@nox.session(python="python3.11")
+@nox.session(python=["3.14"])
+def test_slow(session):
+    """Run only the slow tests."""
+    install_with_poetry(session)
+
+    session.log("Running slow tests with pytest")
+    session.run(
+        "poetry",
+        "run",
+        "pytest",
+        "-m",
+        "slow",
+        "--cov=myth_hash",
+        "--cov-report=term-missing",
+        "--cov-report=xml",
+        "tests/",
+        *session.posargs,
+        external=True,
+    )
+
+
+@nox.session(python="3.14")
+def check_format(session):
+    """Check code formatting with black and isort."""
+    install_with_poetry(session)
+    session.run("poetry", "run", "black", "--check", str(PYTHON_SOURCE), external=True)
+    session.run("poetry", "run", "isort", "--check-only", *PYTHON_FILES, external=True)
+
+
+@nox.session(python="3.14")
+def format_files(session):
+    """Format code with black and isort."""
+    install_with_poetry(session)
+    session.run("poetry", "run", "black", str(PYTHON_SOURCE), external=True)
+    session.run("poetry", "run", "isort", *PYTHON_FILES, external=True)
+
+
+@nox.session(python="3.14")
 def mypy(session):
-    session.install("poetry")
-    session.run("poetry", "install")
-    session.log("Running type checks with mypy")
-    session.run("poetry", "run", "mypy", *PYTHON_FILES, external=True)
+    """Run type checking with mypy."""
+    install_with_poetry(session)
+    session.run("poetry", "run", "mypy", *MYPY_FILES, external=True)
 
 
-@nox.session(python="python3.11")
+@nox.session(python="3.14")
 def pylint(session):
-    session.install("poetry")
-    session.run("poetry", "install")
-    session.log("Running linting with pylint")
+    """Run linting with pylint."""
+    install_with_poetry(session)
     session.run("poetry", "run", "pylint", *PYTHON_FILES, external=True)
 
 
-@nox.session(python="python3.11")
+@nox.session(python="3.14")
+def bandit(session):
+    """Run security checks with bandit."""
+    install_with_poetry(session)
+    session.run("poetry", "run", "bandit", "-r", "myth_hash/", external=True)
+
+
+@nox.session(python="3.14")
 def upgrade_syntax(session):
-    session.log("Upgrading syntax with pyupgrade")
+    """Upgrade syntax with pyupgrade."""
+    install_with_poetry(session)
     session.run(
         "poetry", "run", "pyupgrade", "--py311-plus", *PYTHON_FILES, external=True
     )
 
 
-@nox.session(python=["3.11", "3.12"])
-def test(session):
-    session.log("Running tests with pytest")
-    session.install("poetry")
-    session.run("poetry", "env", "use", session.python, external=True)
-    session.run("poetry", "install", external=True)
-    tests_dir = PYTHON_SOURCE / "tests"
-    session.run("poetry", "run", "pytest", "-W", "error", str(tests_dir), external=True)
-
-
-@nox.session(python="python3.11")
+@nox.session(python="3.14")
 def check(session):
+    """Run all checks (format, types, linting, security)."""
     session.notify("check_format")
     session.notify("mypy")
     session.notify("pylint")
@@ -109,6 +130,7 @@ def check(session):
 
 @nox.session
 def clean(session):
+    """Clean up temporary files and directories."""
     session.log("Cleaning up temporary files and directories")
 
     folders_to_clean = [
@@ -118,6 +140,9 @@ def clean(session):
         ".pytest_cache",
         "htmlcov",
         "__pycache__",
+        ".mypy_cache",
+        ".coverage",
+        "coverage.xml",
     ]
 
     folders_to_clean.extend(str(folder) for folder in PYTHON_SOURCE.glob("*.egg-info"))
@@ -128,16 +153,10 @@ def clean(session):
             session.log(f"Removing {folder_path}")
             shutil.rmtree(folder_path, ignore_errors=True)
 
-    for path in PYTHON_SOURCE.rglob("*.pyc"):
-        session.log(f"Removing {path}")
-        try:
-            path.unlink()
-        except PermissionError:
-            session.log(f"Permission denied: {path}")
-
-    for path in PYTHON_SOURCE.rglob("*.pyo"):
-        session.log(f"Removing {path}")
-        try:
-            path.unlink()
-        except PermissionError:
-            session.log(f"Permission denied: {path}")
+    for pattern in ["*.pyc", "*.pyo", "*.pyd", "*.so", "*~"]:
+        for path in PYTHON_SOURCE.rglob(pattern):
+            session.log(f"Removing {path}")
+            try:
+                path.unlink()
+            except (PermissionError, FileNotFoundError) as e:
+                session.log(f"Error removing {path}: {e}")

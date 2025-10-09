@@ -1,12 +1,11 @@
 # Myth Hash
 
-![Nox Tests on Multiple Python Versions](https://github.com/cl445/myth-hash/actions/workflows/nox.yml/badge.svg)
-![Coverage](https://codecov.io/gh/cl445/myth-hash/branch/main/graph/badge.svg)
-![Python Versions](https://img.shields.io/pypi/pyversions/myth-hash.svg)
-![License](https://img.shields.io/github/license/cl445/myth-hash.svg)
-![Last Commit](https://img.shields.io/github/last-commit/cl445/myth-hash.svg)
-![Contributors](https://img.shields.io/github/contributors/cl445/myth-hash.svg)
-![Issues](https://img.shields.io/github/issues/cl445/myth-hash.svg)
+[![CI](https://github.com/cl445/myth-hash/actions/workflows/test.yml/badge.svg)](https://github.com/cl445/myth-hash/actions/workflows/test.yml)
+[![Coverage](https://codecov.io/gh/cl445/myth-hash/branch/main/graph/badge.svg)](https://codecov.io/gh/cl445/myth-hash)
+[![Python Versions](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://www.python.org)
+[![License](https://img.shields.io/github/license/cl445/myth-hash.svg)](https://github.com/cl445/myth-hash/blob/main/LICENSE)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 
 `Myth Hash` is a Python package designed to create human-readable hashes that are not only functional but also cognitively engaging. A key feature of this tool is its multilingual support, enabling the generation of hashes in multiple languages. The concept behind these human-readable hashes is to enhance communication and recognition by creating hashes that form vivid, memorable mental images. The goal is to make the hash as human-compatible as possible, ensuring it effectively serves its purpose in an intuitive and user-friendly manner.
 
@@ -18,6 +17,11 @@
 - **Library Usage:** Integrate `Myth Hash` into your Python projects.
 - **Customizable Data:** Modify the included JSON files to customize the generated names.
 
+
+## Requirements
+
+- **Python:** 3.11, 3.12, 3.13, 3.14 (including free-threaded 3.14t)
+- **Platforms:** Linux, macOS, Windows
 
 ## Installation
 

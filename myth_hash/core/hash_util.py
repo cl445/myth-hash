@@ -1,3 +1,5 @@
+"""Hash utility functions for generating character names."""
+
 import hashlib
 
 from .character_data_loader import CharacterData, CharacterDataLoader
@@ -6,6 +8,7 @@ SUPPORTED_LANGUAGES = {"en", "de"}
 
 
 def check_language(language: str) -> None:
+    """Check if the given language is supported."""
     if language not in SUPPORTED_LANGUAGES:
         raise ValueError(
             f"Unsupported language '{language}'. Supported languages are: {', '.join(SUPPORTED_LANGUAGES)}."
@@ -13,6 +16,7 @@ def check_language(language: str) -> None:
 
 
 def generate_indices(input_string: str, list_sizes: list[int]) -> list[int]:
+    """Generate indices from input string hash for selecting character attributes."""
     sha256 = hashlib.sha256(input_string.encode())
     d = sha256.digest()
     hash_length = len(d)
@@ -31,6 +35,15 @@ def generate_indices(input_string: str, list_sizes: list[int]) -> list[int]:
 
 
 def hash_name(input_string: str, language: str = "en") -> tuple[str, str, str]:
+    """Generate a fantasy character name from an input string.
+
+    Args:
+        input_string: The string to hash
+        language: The language for the output (default: "en")
+
+    Returns:
+        A tuple of (physical_attribute, personality_attribute, character_noun)
+    """
     check_language(language)
 
     data_loader = CharacterDataLoader()

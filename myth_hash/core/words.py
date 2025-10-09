@@ -1,5 +1,12 @@
+"""Word classes for character attributes and nouns."""
+
+from typing import Any
+
+
 class NominativAdjective:
-    def __init__(self, word_id: int, words: dict) -> None:
+    """Represents a nominative adjective with multilingual support."""
+
+    def __init__(self, word_id: int, words: dict[str, dict[str, str]]) -> None:
         """
         Constructor for the NominativAdjective class.
 
@@ -19,7 +26,7 @@ class NominativAdjective:
         return f"Adjective: {self.word_id} - {self.words}"
 
     @staticmethod
-    def validate_words(words: dict):
+    def validate_words(words: dict[str, dict[str, str]]) -> None:
         """
         Validates the structure of the words dictionary. The dictionary should contain languages as keys
         and dictionaries as values, with the inner dictionaries having genders as keys and words as values.
@@ -55,9 +62,10 @@ class NominativAdjective:
             ) from exc
 
     def set_word(self, language: str, gender: str, word: str) -> None:
+        """Set a word for a specific language and gender."""
         self.words[language][gender] = word
 
-    def as_json(self) -> dict:
+    def as_json(self) -> dict[str, Any]:
         """
         Returns a JSON-compatible dictionary that contains the attributes of the adjective.
 
@@ -67,7 +75,9 @@ class NominativAdjective:
 
 
 class CharacterNoun:
-    def __init__(self, character_id: int, data: dict) -> None:
+    """Represents a character noun with multilingual word and gender information."""
+
+    def __init__(self, character_id: int, data: dict[str, dict[str, str]]) -> None:
         """
         Constructor for the CharacterNoun class.
 
@@ -98,7 +108,7 @@ class CharacterNoun:
                 f"No {attribute} found for the language '{language}'."
             ) from exc
 
-    def as_json(self) -> dict:
+    def as_json(self) -> dict[str, Any]:
         """
         Returns a JSON-compatible dictionary that contains the attributes of the noun.
 
@@ -107,7 +117,7 @@ class CharacterNoun:
         return {"character_id": self.character_id, "data": self.data}
 
     @staticmethod
-    def from_json(json: dict) -> "CharacterNoun":
+    def from_json(json: dict[str, Any]) -> "CharacterNoun":
         """
         Returns a CharacterNoun object from a JSON-compatible dictionary.
 

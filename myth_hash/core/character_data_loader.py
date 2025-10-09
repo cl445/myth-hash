@@ -1,3 +1,5 @@
+"""Data loader for character attributes and nouns."""
+
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -13,16 +15,20 @@ PERSONALITY_ATTRIBUTES_FILE = BASE_PATH / "personality_attributes.json"
 
 @dataclass
 class CharacterData:
+    """Container for character data including nouns and attributes."""
+
     character_nouns: list[CharacterNoun]
     physical_attributes: list[NominativAdjective]
     personality_attributes: list[NominativAdjective]
 
 
 class CharacterDataLoader:
+    """Singleton loader for character data from JSON files."""
+
     _instance: Optional["CharacterDataLoader"] = None
     _character_data: CharacterData | None = None
 
-    def __new__(cls):
+    def __new__(cls) -> "CharacterDataLoader":
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._load_data()
@@ -64,6 +70,7 @@ class CharacterDataLoader:
 
     @property
     def character_data(self) -> CharacterData:
+        """Get the loaded character data."""
         if self._character_data is None:
             self._load_data()
         if self._character_data is None:

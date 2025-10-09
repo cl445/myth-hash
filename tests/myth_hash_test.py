@@ -1,6 +1,8 @@
 import logging
 import unittest
 
+import pytest
+
 from myth_hash import hash_name
 from myth_hash.core import CharacterDataLoader
 
@@ -30,6 +32,7 @@ class TestNameUniqueness(unittest.TestCase):
         )
         self.character_nouns = self.data_loader.character_data.character_nouns
 
+    @pytest.mark.slow
     def test_name_uniqueness(self):
         generated_names = set()
         duplicates = 0
