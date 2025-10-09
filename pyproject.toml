@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "myth-hash"
-version = "0.2.0"
+version = "0.2.1"
 description = "A tool for generating human-readable, multilingual fantasy character names based on input string hashes."
 authors = ["Claas Flint <claas.flint@gmail.com>"]
 license = "MIT"
