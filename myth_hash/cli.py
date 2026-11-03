@@ -6,24 +6,20 @@ import logging
 import sys
 
 from myth_hash import hash_name
+from myth_hash.core.hash_util import SUPPORTED_LANGUAGES
+
+LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 
 def setup_logging(log_level: str) -> None:
-    """Configure logging with the specified log level."""
-    numeric_level = getattr(logging, log_level.upper(), None)
-    if not isinstance(numeric_level, int):
-        logging.error("Invalid log level: %s", log_level)
-        sys.exit(1)
-    logging.basicConfig(level=numeric_level)
+    """Configure logging with the specified log level (one of ``LOG_LEVELS``)."""
+    logging.basicConfig()
+    logging.getLogger().setLevel(log_level)
 
 
 def hash_name_cli(input_string: str, language: str, output_format: str) -> None:
     """Generate and output a fantasy name in the specified format."""
-    try:
-        physical_attr, personality_attr, character = hash_name(input_string, language)
-    except Exception as e:
-        logging.error("Failed to generate fantasy name: %s", e)
-        raise
+    physical_attr, personality_attr, character = hash_name(input_string, language)
 
     if output_format == "text":
         print(f"{physical_attr}-{personality_attr}-{character.replace(' ', '')}")
@@ -36,8 +32,8 @@ def hash_name_cli(input_string: str, language: str, output_format: str) -> None:
         print(json.dumps(output, ensure_ascii=False))
 
 
-def parse_arguments() -> argparse.Namespace:
-    """Parse command-line arguments."""
+def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse command-line arguments (defaults to ``sys.argv[1:]``)."""
     parser = argparse.ArgumentParser(
         description="Generates a fantasy name consisting of two character attributes and a mythical creature from a hash value of an input string.",
     )
@@ -51,7 +47,7 @@ def parse_arguments() -> argparse.Namespace:
         "--language",
         type=str,
         default="en",
-        choices=["en", "de"],
+        choices=sorted(SUPPORTED_LANGUAGES),
         help="Specify the output language. Supported languages: English (en) and German (de). Default is English.",
     )
     parser.add_argument(
@@ -66,11 +62,11 @@ def parse_arguments() -> argparse.Namespace:
         "--log-level",
         type=str,
         default="INFO",
-        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        choices=LOG_LEVELS,
         help="Set the logging level. Default is INFO.",
     )
 
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def validate_input_string(input_string: str) -> None:
@@ -79,9 +75,9 @@ def validate_input_string(input_string: str) -> None:
         raise ValueError("Input string cannot be empty.")
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     """Main entry point for the CLI."""
-    args = parse_arguments()
+    args = parse_arguments(argv)
 
     setup_logging(args.log_level)
 
@@ -91,8 +87,8 @@ def main() -> None:
     except ValueError as ve:
         logging.error("Input validation error: %s", ve)
         sys.exit(1)
-    except Exception as e:  # pylint: disable=broad-exception-caught
-        logging.error("An unexpected error occurred: %s", e)
+    except Exception as e:  # noqa: BLE001
+        logging.error("Failed to generate fantasy name: %s", e)
         sys.exit(1)
 
 

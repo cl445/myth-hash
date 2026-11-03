@@ -6,9 +6,8 @@ from typing import Any
 class NominativAdjective:
     """Represents a nominative adjective with multilingual support."""
 
-    def __init__(self, word_id: int, words: dict[str, dict[str, str]]) -> None:
-        """
-        Constructor for the NominativAdjective class.
+    def __init__(self, word_id: str, words: dict[str, dict[str, str]]) -> None:
+        """Constructor for the NominativAdjective class.
 
         :param word_id: ID of the adjective
         :param words: A dictionary that contains the words in different languages and genders
@@ -18,8 +17,8 @@ class NominativAdjective:
         self.words = words
 
     def __str__(self) -> str:
-        return str(
-            self.words.get("en", {}).get("neutral", "No neutral English word available")
+        return self.words.get("en", {}).get(
+            "neutral", "No neutral English word available"
         )
 
     def __repr__(self) -> str:
@@ -27,9 +26,9 @@ class NominativAdjective:
 
     @staticmethod
     def validate_words(words: dict[str, dict[str, str]]) -> None:
-        """
-        Validates the structure of the words dictionary. The dictionary should contain languages as keys
-        and dictionaries as values, with the inner dictionaries having genders as keys and words as values.
+        """Validates the structure of the words dictionary.
+
+        The dictionary should contain languages as keys and dictionaries as values, with the inner dictionaries having genders as keys and words as values.
 
         :param words: Dictionary to validate
         :raises ValueError: If the dictionary structure is invalid
@@ -46,8 +45,7 @@ class NominativAdjective:
                     )
 
     def word(self, language: str, gender: str = "neutral") -> str:
-        """
-        Returns the word in the specified language and gender.
+        """Returns the word in the specified language and gender.
 
         :param language: The language of the word
         :param gender: The gender of the word. Options are "masculine", "feminine", and "neutral".
@@ -55,7 +53,7 @@ class NominativAdjective:
         :return: The word in the specified language and gender
         """
         try:
-            return str(self.words[language][gender])
+            return self.words[language][gender]
         except KeyError as exc:
             raise ValueError(
                 f"No word found for the language '{language}' and gender '{gender}'."
@@ -66,8 +64,7 @@ class NominativAdjective:
         self.words[language][gender] = word
 
     def as_json(self) -> dict[str, Any]:
-        """
-        Returns a JSON-compatible dictionary that contains the attributes of the adjective.
+        """Returns a JSON-compatible dictionary that contains the attributes of the adjective.
 
         :return: A dictionary that contains the attributes of the adjective
         """
@@ -77,9 +74,8 @@ class NominativAdjective:
 class CharacterNoun:
     """Represents a character noun with multilingual word and gender information."""
 
-    def __init__(self, character_id: int, data: dict[str, dict[str, str]]) -> None:
-        """
-        Constructor for the CharacterNoun class.
+    def __init__(self, character_id: str, data: dict[str, dict[str, str]]) -> None:
+        """Constructor for the CharacterNoun class.
 
         :param character_id: ID of the noun
         :param data: A dictionary containing the word and gender information in different languages
@@ -94,23 +90,21 @@ class CharacterNoun:
         return f"CharacterNoun: {self.character_id} - {self.data}"
 
     def get_attribute(self, language: str, attribute: str) -> str:
-        """
-        Returns the specified attribute in the specified language.
+        """Returns the specified attribute in the specified language.
 
         :param language: The language of the attribute
         :param attribute: The attribute to get. Options are 'word' and 'gender'.
         :return: The attribute in the specified language
         """
         try:
-            return str(self.data[language][attribute])
+            return self.data[language][attribute]
         except KeyError as exc:
             raise ValueError(
                 f"No {attribute} found for the language '{language}'."
             ) from exc
 
     def as_json(self) -> dict[str, Any]:
-        """
-        Returns a JSON-compatible dictionary that contains the attributes of the noun.
+        """Returns a JSON-compatible dictionary that contains the attributes of the noun.
 
         :return: A dictionary that contains the attributes of the noun
         """
@@ -118,8 +112,7 @@ class CharacterNoun:
 
     @staticmethod
     def from_json(json: dict[str, Any]) -> "CharacterNoun":
-        """
-        Returns a CharacterNoun object from a JSON-compatible dictionary.
+        """Returns a CharacterNoun object from a JSON-compatible dictionary.
 
         :param json: A JSON-compatible dictionary that contains the attributes of the noun
         :return: A CharacterNoun object

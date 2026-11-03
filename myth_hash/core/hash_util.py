@@ -11,7 +11,7 @@ def check_language(language: str) -> None:
     """Check if the given language is supported."""
     if language not in SUPPORTED_LANGUAGES:
         raise ValueError(
-            f"Unsupported language '{language}'. Supported languages are: {', '.join(SUPPORTED_LANGUAGES)}."
+            f"Unsupported language '{language}'. Supported languages are: {', '.join(sorted(SUPPORTED_LANGUAGES))}."
         )
 
 

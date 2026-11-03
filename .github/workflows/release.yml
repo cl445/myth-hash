@@ -11,64 +11,50 @@ jobs:
     permissions:
       contents: write
       id-token: write  # Required for PyPI trusted publishing
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python 3.14
-      uses: actions/setup-python@v5
+    - uses: actions/checkout@v7
+
+    - name: Set up uv and Python 3.14
+      uses: astral-sh/setup-uv@v10.3.3
       with:
         python-version: "3.14"
-        allow-prereleases: true
-    
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: latest
-    
-    - name: Install dependencies
-      run: poetry install --no-interaction --with dev
-    
-    - name: Run tests
-      run: poetry run nox -s test-3.14
-    
-    - name: Build package
-      run: poetry build
-    
-    - name: Extract version from tag
-      id: get_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-    
-    - name: Generate release notes
-      id: release_notes
+        enable-cache: true
+
+    - name: Check that tag matches project version
+      id: version
       run: |
-        cat << 'EOF' > release_notes.md
-        ## What's Changed
-        
-        See the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
-        
-        ## Installation
-        
-        ```bash
-        pip install myth-hash==${{ steps.get_version.outputs.VERSION }}
-        ```
-        
-        ## Full Changelog
-        
-        **Full Changelog**: https://github.com/${{ github.repository }}/compare/v0.1.0...v${{ steps.get_version.outputs.VERSION }}
-        EOF
-    
+        PROJECT_VERSION=$(uv version --short)
+        if [ "v${PROJECT_VERSION}" != "${GITHUB_REF_NAME}" ]; then
+          echo "::error::Tag ${GITHUB_REF_NAME} does not match project version ${PROJECT_VERSION}"
+          exit 1
+        fi
+        echo "VERSION=${PROJECT_VERSION}" >> "$GITHUB_OUTPUT"
+
+    - name: Run checks and tests
+      run: uv run --locked nox -s check test-3.14
+
+    - name: Build package
+      run: uv build
+
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: dist/*
-        body_path: release_notes.md
+        body: |
+          See the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+
+          ## Installation
+
+          ```bash
+          pip install myth-hash==${{ steps.version.outputs.VERSION }}
+          ```
         draft: false
         prerelease: false
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
+
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:

@@ -1,65 +1,88 @@
-[tool.poetry]
+[project]
 name = "myth-hash"
-version = "0.2.1"
+version = "0.3.0"
 description = "A tool for generating human-readable, multilingual fantasy character names based on input string hashes."
-authors = ["Claas Flint <claas.flint@gmail.com>"]
+authors = [{ name = "Claas Flint", email = "claas.flint@gmail.com" }]
 license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
-homepage = "https://github.com/cl445/myth-hash"
-repository = "https://github.com/cl445/myth-hash"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.15",
+    "Programming Language :: Python :: Free Threading :: 3 - Stable",
     "Operating System :: OS Independent",
-    "Typing :: Typed"
+    "Typing :: Typed",
 ]
-include = ["data/*.json", "py.typed"]
-packages = [{include = "myth_hash"}]
+dependencies = []
 
-[tool.poetry.dependencies]
-python = ">=3.11,<4.0"
+[project.urls]
+Homepage = "https://github.com/cl445/myth-hash"
+Repository = "https://github.com/cl445/myth-hash"
+Changelog = "https://github.com/cl445/myth-hash/blob/main/CHANGELOG.md"
 
-[tool.poetry.scripts]
+[project.scripts]
 myth-hash = "myth_hash.cli:main"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.13,<0.14"]
+build-backend = "uv_build"
 
-[tool.poetry.group.dev.dependencies]
-bandit = "*"
-black = "*"
-isort = "*"
-mypy = "*"
-pylint = "*"
-pytest = "*"
-pytest-cov = "*"
-pyupgrade = "*"
-nox = "*"
+[tool.uv.build-backend]
+module-root = ""
+
+[dependency-groups]
+dev = [
+    "bandit",
+    "nox",
+    "pyrefly",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+]
 
 [tool.bandit]
-exclude = ["tests/*.py", "venv/*.py"]
+exclude_dirs = ["tests", ".venv", ".nox"]
 
-[tool.mypy]
-python_version = "3.14"
-disable_error_code = ["attr-defined"]
-strict = true
-ignore_missing_imports = true
-warn_unused_configs = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_return_any = true
-warn_redundant_casts = true
-exclude = ["tests/", "noxfile.py"]
+[tool.pyrefly]
+preset = "strict"
+python-version = "3.11"
+project-includes = ["myth_hash", "tests", "noxfile.py"]
 
-[tool.pylint.'MESSAGES CONTROL']
-disable = [
-    "line-too-long"
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "BLE",  # flake8-blind-except
+    "C4",   # flake8-comprehensions
+    "SIM",  # flake8-simplify
+    "PL",   # pylint
+    "RUF",  # ruff-specific
+    "D",    # pydocstyle
+    "ANN",  # flake8-annotations (strict typing)
 ]
+ignore = [
+    "E501",  # line length is handled by the formatter
+    "D105",  # magic methods are self-explanatory
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "PLR2004"]
 
 [tool.pytest.ini_options]
 log_cli = true
@@ -68,14 +91,5 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
 ]
 
-[tool.black]
-line-length = 88
-target-version = ['py311', 'py312', 'py313', 'py314']
-
-[tool.isort]
-profile = "black"
-line_length = 88
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
+[tool.coverage.run]
+source = ["myth_hash"]

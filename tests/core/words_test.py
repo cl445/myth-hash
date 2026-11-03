@@ -8,164 +8,164 @@ from myth_hash.core.words import CharacterNoun, NominativAdjective
 class TestNominativAdjective:
     """Tests for NominativAdjective class."""
 
-    def test_init_valid(self):
+    def test_init_valid(self) -> None:
         """Test initialization with valid data."""
         words = {
             "en": {"neutral": "big"},
             "de": {"masculine": "großer", "feminine": "große", "neutral": "großes"},
         }
-        adj = NominativAdjective(1, words)
-        assert adj.word_id == 1
+        adj = NominativAdjective("1", words)
+        assert adj.word_id == "1"
         assert adj.words == words
 
-    def test_validate_words_invalid_structure(self):
+    def test_validate_words_invalid_structure(self) -> None:
         """Test that invalid word structure raises ValueError."""
         with pytest.raises(ValueError, match="must be a dictionary"):
-            NominativAdjective(1, {"en": "not_a_dict"})
+            NominativAdjective("1", {"en": "not_a_dict"})  # type: ignore[bad-assignment]
 
-    def test_validate_words_invalid_gender(self):
+    def test_validate_words_invalid_gender(self) -> None:
         """Test that invalid gender raises ValueError."""
         with pytest.raises(ValueError, match="Invalid gender"):
-            NominativAdjective(1, {"en": {"invalid_gender": "word"}})
+            NominativAdjective("1", {"en": {"invalid_gender": "word"}})
 
-    def test_str(self):
+    def test_str(self) -> None:
         """Test string representation."""
         words = {"en": {"neutral": "big"}}
-        adj = NominativAdjective(1, words)
+        adj = NominativAdjective("1", words)
         assert str(adj) == "big"
 
-    def test_str_no_english(self):
+    def test_str_no_english(self) -> None:
         """Test string representation when English is not available."""
         words = {"de": {"neutral": "groß"}}
-        adj = NominativAdjective(1, words)
+        adj = NominativAdjective("1", words)
         assert str(adj) == "No neutral English word available"
 
-    def test_repr(self):
+    def test_repr(self) -> None:
         """Test repr representation."""
         words = {"en": {"neutral": "big"}}
-        adj = NominativAdjective(1, words)
+        adj = NominativAdjective("1", words)
         assert "Adjective: 1" in repr(adj)
 
-    def test_word_valid(self):
+    def test_word_valid(self) -> None:
         """Test getting a word with valid language and gender."""
         words = {
             "en": {"neutral": "big"},
             "de": {"masculine": "großer", "feminine": "große"},
         }
-        adj = NominativAdjective(1, words)
+        adj = NominativAdjective("1", words)
         assert adj.word("en", "neutral") == "big"
         assert adj.word("de", "masculine") == "großer"
         assert adj.word("de", "feminine") == "große"
 
-    def test_word_default_gender(self):
+    def test_word_default_gender(self) -> None:
         """Test that default gender is neutral."""
         words = {"en": {"neutral": "big", "masculine": "big"}}
-        adj = NominativAdjective(1, words)
+        adj = NominativAdjective("1", words)
         assert adj.word("en") == "big"
 
-    def test_word_invalid_language(self):
+    def test_word_invalid_language(self) -> None:
         """Test that invalid language raises ValueError."""
         words = {"en": {"neutral": "big"}}
-        adj = NominativAdjective(1, words)
+        adj = NominativAdjective("1", words)
         with pytest.raises(ValueError, match="No word found for the language 'fr'"):
             adj.word("fr", "neutral")
 
-    def test_word_invalid_gender(self):
+    def test_word_invalid_gender(self) -> None:
         """Test that invalid gender raises ValueError."""
         words = {"en": {"neutral": "big"}}
-        adj = NominativAdjective(1, words)
-        with pytest.raises(ValueError, match="No word found.*gender 'masculine'"):
+        adj = NominativAdjective("1", words)
+        with pytest.raises(ValueError, match=r"No word found.*gender 'masculine'"):
             adj.word("en", "masculine")
 
-    def test_set_word(self):
+    def test_set_word(self) -> None:
         """Test setting a word."""
         words = {"en": {"neutral": "big"}}
-        adj = NominativAdjective(1, words)
+        adj = NominativAdjective("1", words)
         adj.set_word("en", "masculine", "bigger")
         assert adj.word("en", "masculine") == "bigger"
 
-    def test_as_json(self):
+    def test_as_json(self) -> None:
         """Test JSON serialization."""
         words = {"en": {"neutral": "big"}}
-        adj = NominativAdjective(1, words)
+        adj = NominativAdjective("1", words)
         json_data = adj.as_json()
-        assert json_data["id"] == 1
+        assert json_data["id"] == "1"
         assert json_data["words"] == words
 
 
 class TestCharacterNoun:
     """Tests for CharacterNoun class."""
 
-    def test_init(self):
+    def test_init(self) -> None:
         """Test initialization."""
         data = {
             "en": {"word": "Dragon", "gender": "neutral"},
             "de": {"word": "Drache", "gender": "masculine"},
         }
-        noun = CharacterNoun(1, data)
-        assert noun.character_id == 1
+        noun = CharacterNoun("1", data)
+        assert noun.character_id == "1"
         assert noun.data == data
 
-    def test_str(self):
+    def test_str(self) -> None:
         """Test string representation."""
         data = {"en": {"word": "Dragon", "gender": "neutral"}}
-        noun = CharacterNoun(1, data)
+        noun = CharacterNoun("1", data)
         assert str(noun) == "Dragon"
 
-    def test_repr(self):
+    def test_repr(self) -> None:
         """Test repr representation."""
         data = {"en": {"word": "Dragon", "gender": "neutral"}}
-        noun = CharacterNoun(1, data)
+        noun = CharacterNoun("1", data)
         assert "CharacterNoun: 1" in repr(noun)
 
-    def test_get_attribute_word(self):
+    def test_get_attribute_word(self) -> None:
         """Test getting word attribute."""
         data = {
             "en": {"word": "Dragon", "gender": "neutral"},
             "de": {"word": "Drache", "gender": "masculine"},
         }
-        noun = CharacterNoun(1, data)
+        noun = CharacterNoun("1", data)
         assert noun.get_attribute("en", "word") == "Dragon"
         assert noun.get_attribute("de", "word") == "Drache"
 
-    def test_get_attribute_gender(self):
+    def test_get_attribute_gender(self) -> None:
         """Test getting gender attribute."""
         data = {
             "en": {"word": "Dragon", "gender": "neutral"},
             "de": {"word": "Drache", "gender": "masculine"},
         }
-        noun = CharacterNoun(1, data)
+        noun = CharacterNoun("1", data)
         assert noun.get_attribute("en", "gender") == "neutral"
         assert noun.get_attribute("de", "gender") == "masculine"
 
-    def test_get_attribute_invalid_language(self):
+    def test_get_attribute_invalid_language(self) -> None:
         """Test that invalid language raises ValueError."""
         data = {"en": {"word": "Dragon", "gender": "neutral"}}
-        noun = CharacterNoun(1, data)
+        noun = CharacterNoun("1", data)
         with pytest.raises(ValueError, match="No word found for the language 'fr'"):
             noun.get_attribute("fr", "word")
 
-    def test_get_attribute_invalid_attribute(self):
+    def test_get_attribute_invalid_attribute(self) -> None:
         """Test that invalid attribute raises ValueError."""
         data = {"en": {"word": "Dragon", "gender": "neutral"}}
-        noun = CharacterNoun(1, data)
+        noun = CharacterNoun("1", data)
         with pytest.raises(ValueError, match="No invalid found"):
             noun.get_attribute("en", "invalid")
 
-    def test_as_json(self):
+    def test_as_json(self) -> None:
         """Test JSON serialization."""
         data = {"en": {"word": "Dragon", "gender": "neutral"}}
-        noun = CharacterNoun(1, data)
+        noun = CharacterNoun("1", data)
         json_data = noun.as_json()
-        assert json_data["character_id"] == 1
+        assert json_data["character_id"] == "1"
         assert json_data["data"] == data
 
-    def test_from_json(self):
+    def test_from_json(self) -> None:
         """Test JSON deserialization."""
         json_data = {
-            "character_id": 1,
+            "character_id": "1",
             "data": {"en": {"word": "Dragon", "gender": "neutral"}},
         }
         noun = CharacterNoun.from_json(json_data)
-        assert noun.character_id == 1
+        assert noun.character_id == "1"
         assert noun.data == json_data["data"]
