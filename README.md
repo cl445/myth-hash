@@ -1,11 +1,11 @@
 # Myth Hash
 
 [![CI](https://github.com/cl445/myth-hash/actions/workflows/test.yml/badge.svg)](https://github.com/cl445/myth-hash/actions/workflows/test.yml)
-[![Coverage](https://codecov.io/gh/cl445/myth-hash/branch/main/graph/badge.svg)](https://codecov.io/gh/cl445/myth-hash)
-[![Python Versions](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://www.python.org)
+[![Python Versions](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14%20%7C%203.15-blue)](https://www.python.org)
 [![License](https://img.shields.io/github/license/cl445/myth-hash.svg)](https://github.com/cl445/myth-hash/blob/main/LICENSE)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Type checked: pyrefly (strict)](https://img.shields.io/badge/types-pyrefly%20strict-blue)](https://pyrefly.org/)
 
 `Myth Hash` is a Python package designed to create human-readable hashes that are not only functional but also cognitively engaging. A key feature of this tool is its multilingual support, enabling the generation of hashes in multiple languages. The concept behind these human-readable hashes is to enhance communication and recognition by creating hashes that form vivid, memorable mental images. The goal is to make the hash as human-compatible as possible, ensuring it effectively serves its purpose in an intuitive and user-friendly manner.
 
@@ -20,7 +20,7 @@
 
 ## Requirements
 
-- **Python:** 3.11, 3.12, 3.13, 3.14 (including free-threaded 3.14t)
+- **Python:** 3.11, 3.12, 3.13, 3.14, 3.15 (including free-threaded 3.14t and 3.15t)
 - **Platforms:** Linux, macOS, Windows
 
 ## Installation
@@ -56,7 +56,9 @@ Example:
 import myth_hash
 
 # Generate a character name using the hash_name function
-name_parts = myth_hash.hash_name("The moon whispered secrets, but only the cats understood.", "en")
+name_parts = myth_hash.hash_name(
+    "The moon whispered secrets, but only the cats understood.", "en"
+)
 print(name_parts)  # Output: ('exotic', 'thoughtful', 'Griffin')
 
 # Access individual parts of the name
@@ -65,22 +67,38 @@ print(f"Physical Attribute: {physical_attr}")
 print(f"Personality Trait: {personality_attr}")
 print(f"Mystical Character: {mystical_character}")
 ```
-## Performance and Collisions of the Algorithm in Version 0.1.0
+## Uniqueness and Collisions
 
-In a test with 1,000,000 generated names, the hash_name algorithm produced the following results:
-  - Total generated names: 1,000,000 
-  - Actual duplicates: 119,949 
-  - Uniqueness rate: 88.01%
+A name is built from one of 259 physical attributes, one of 239 personality attributes and one of 153 creatures, so there are 9,470,853 possible names. That is a small space compared to a cryptographic hash, and different inputs will regularly map to the same name.
 
-### What Do These Results Mean?
+The slow test (`uv run nox -s test_slow`) hashes 1,000,000 distinct inputs and counts duplicates:
 
- - Collisions: The actual number of duplicates (119,949) resulting in a uniqueness rate of 88.01%. This means roughly 12% of the generated names were duplicates.
- - Implications: While the algorithm is robust, users should be aware that with large datasets, the likelihood of name collisions increases. 
+| Generated names | Duplicates | Uniqueness |
+|----------------:|-----------:|-----------:|
+| 1,000,000       | 119,949    | 88.0%      |
+
+By the birthday problem, the chance of at least one collision is about 5% for 1,000 inputs and above 99% for 10,000 inputs.
+
+Use Myth Hash to make values easy to recognize and talk about, for example in logs, dashboards or UIs, but not as a unique identifier. Keep the original hash around when you need to tell values apart reliably.
+
+These numbers apply to the bundled word lists; adding entries to the JSON files enlarges the name space and lowers the collision rate.
 
 ## Future Improvements
 
  - **Improved Uniqueness:** Add more attributes and characters to reduce the likelihood of name collisions.
  - **Additional Languages:** Add support for more languages with help from the community.
+
+## Development
+
+The project uses [uv](https://docs.astral.sh/uv/) for dependency management and [Nox](https://nox.thea.codes/) as task runner.
+
+```bash
+uv sync                          # create .venv with all dev dependencies
+uv run nox -s check              # ruff (format + lint), pyrefly (strict), bandit
+uv run nox -s test-3.14          # tests with coverage on a single Python version
+uv run nox -s test               # tests on all supported Python versions
+uv run nox -s format_files       # auto-format and apply safe lint fixes
+```
 
 ## Contributing
 

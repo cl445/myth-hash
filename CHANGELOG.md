@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-11-03
+
+### Added
+- Python 3.15 support, including the free-threaded 3.15t build
+- Dependabot configuration for GitHub Actions and `uv.lock` (monthly, grouped)
+- `main()` and `parse_arguments()` accept an optional argument list
+
+### Changed
+- Migrated packaging from Poetry to uv: PEP 621 `[project]` metadata, `uv_build` backend, `uv.lock` and PEP 735 dependency groups
+- Nox sessions now use the uv backend and install from `uv.lock`
+- Replaced black, isort, pylint and pyupgrade with ruff (formatter and linter, including pydocstyle and flake8-annotations rules)
+- Replaced mypy with pyrefly in strict mode; type checking now also covers the tests and the noxfile
+- Updated GitHub Actions (checkout v7, setup-uv v10, action-gh-release v3)
+- Release workflow checks that the tag matches the project version and runs the full check suite before publishing
+- Added the free-threading trove classifier
+- `CharacterDataLoader` initialisation is now guarded by a lock, so concurrent first use (e.g. on free-threaded Python) loads the data exactly once
+- Package data is read via `importlib.resources`; the `*_FILE` constants now hold file names instead of absolute paths and `BASE_PATH` was removed
+- The CLI takes its language choices from `SUPPORTED_LANGUAGES`
+- Test suite converted from unittest to plain pytest; CLI tests call `main()` in-process instead of spawning a subprocess (coverage 91% → 99%)
+- README: rewrote the collision section (no longer tied to version 0.1.0, explains the name space and when not to use Myth Hash as an identifier)
+- CI runs all Python versions on Linux and only the oldest and newest on macOS and Windows
+
+### Fixed
+- Type annotations of `NominativAdjective.word_id` and `CharacterNoun.character_id` said `int`, but the IDs come from JSON keys and are `str`
+- The CLI logged a failure twice when name generation raised an exception
+- The "unsupported language" error listed the languages in random order
+- Removed an unreachable invalid-log-level branch from `setup_logging`
+- CLI tests failed on Windows because they started `python3` instead of the current interpreter and read the output with the console code page
+- Release notes linked the full changelog against a hard-coded `v0.1.0`
+- Renamed the misspelled test module `chracter_data_loader_test.py`
+
+### Removed
+- Codecov upload and badge: the repository was never activated on Codecov, so no report was ever received. Coverage is still printed in the CI log.
+
 ## [0.2.1] - 2025-10-09
 
 ### Added
