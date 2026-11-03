@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- Release workflow split into separate build, GitHub release and PyPI jobs, each with minimal permissions; the GitHub release is created with the `gh` CLI instead of a third-party action
+- All GitHub Actions pinned to commit SHAs (kept current by Dependabot); checkouts no longer persist credentials
+- CI runs on pushes to `main` and on pull requests, no longer twice per pull request
+- README: added `uvx` usage
+
+### Fixed
+- GitHub releases no longer include the `.gitignore` that `uv build` writes into `dist/`
+
 ## [0.3.0] - 2026-11-03
 
 ### Added

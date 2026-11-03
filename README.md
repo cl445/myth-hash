@@ -31,6 +31,12 @@ You can install `Myth Hash` using pip:
 pip install myth-hash
 ```
 
+To run the CLI without installing it, use [uv](https://docs.astral.sh/uv/):
+
+```bash
+uvx myth-hash "The moon whispered secrets, but only the cats understood."
+```
+
 ## Usage
 
 ### Command Line Interface (CLI)

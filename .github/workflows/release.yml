@@ -5,21 +5,26 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions: {}
+
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      id-token: write  # Required for PyPI trusted publishing
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Set up uv and Python 3.14
-      uses: astral-sh/setup-uv@v10.3.3
+      uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         python-version: "3.14"
-        enable-cache: true
+        enable-cache: false  # never restore caches into a publishing workflow
 
     - name: Check that tag matches project version
       id: version
@@ -37,27 +42,62 @@ jobs:
     - name: Build package
       run: uv build
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v3
+    - name: Upload distributions
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
-        files: |
+        name: dist
+        path: |
           dist/*.whl
           dist/*.tar.gz
-        body: |
-          See the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+        if-no-files-found: error
 
-          ## Installation
+  github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # create the GitHub release
 
-          ```bash
-          pip install myth-hash==${{ steps.version.outputs.VERSION }}
-          ```
-        draft: false
-        prerelease: false
-        generate_release_notes: true
+    steps:
+    - name: Download distributions
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: dist
+        path: dist/
+
+    - name: Create GitHub Release
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ github.token }}
+        VERSION: ${{ needs.build.outputs.version }}
+      run: |
+        cat > notes.md <<EOF
+        See the [CHANGELOG](https://github.com/${GITHUB_REPOSITORY}/blob/main/CHANGELOG.md) for details.
+
+        ## Installation
+
+        \`\`\`bash
+        pip install myth-hash==${VERSION}
+        \`\`\`
+        EOF
+        gh release create "$GITHUB_REF_NAME" dist/*.whl dist/*.tar.gz \
+          --repo "$GITHUB_REPOSITORY" \
+          --title "$GITHUB_REF_NAME" \
+          --notes-file notes.md \
+          --generate-notes
+
+  pypi-publish:
+    needs: github-release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # PyPI trusted publishing
+
+    steps:
+    - name: Download distributions
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: dist
+        path: dist/
 
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
       with:
         skip-existing: true
