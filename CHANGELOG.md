@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Nox sessions now use the uv backend and install from `uv.lock`
 - Replaced black, isort, pylint and pyupgrade with ruff (formatter and linter, including pydocstyle and flake8-annotations rules)
 - Replaced mypy with pyrefly in strict mode; type checking now also covers the tests and the noxfile
-- Updated GitHub Actions (checkout v7, setup-uv v10, action-gh-release v3)
+- Updated GitHub Actions (checkout v7, setup-uv v10.3.3, action-gh-release v3)
 - Release workflow checks that the tag matches the project version and runs the full check suite before publishing
 - Added the free-threading trove classifier
 - `CharacterDataLoader` initialisation is now guarded by a lock, so concurrent first use (e.g. on free-threaded Python) loads the data exactly once
